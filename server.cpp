@@ -1,4 +1,4 @@
-//gcc -Wall -o server Server.c -L/usr/lib -lssl -lcrypto
+//g++ -Wall -o server server.c -L/usr/lib -lssl -lcrypto
 
 #include <errno.h>
 #include <unistd.h>

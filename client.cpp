@@ -1,4 +1,4 @@
-//gcc -Wall -o client  Client.c -L/usr/lib -lssl -lcrypto
+//g++ -Wall -o client  client.c -L/usr/lib -lssl -lcrypto
 
 #include <stdio.h>
 #include <errno.h>
