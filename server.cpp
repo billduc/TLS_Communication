@@ -1,4 +1,4 @@
-//g++ -Wall -o server server.c -L/usr/lib -lssl -lcrypto
+//g++ -Wall -o server server.cpp -L/usr/lib -lssl -lcrypto
 
 #include <errno.h>
 #include <unistd.h>
@@ -18,21 +18,28 @@ int OpenListener(int port)
 {   
 	int sd;
 	struct sockaddr_in addr;
+
+	//create socket
 	sd = socket(PF_INET, SOCK_STREAM, 0);
+	
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = INADDR_ANY;
+	
+	//bind socket to listen
 	if (bind(sd, (struct sockaddr*)&addr, sizeof(addr)) != 0 )
 	{
 		perror("can't bind port");
 		abort();
 	}
+	
 	if ( listen(sd, 10) != 0 )
 	{
 		perror("Can't configure listening port");
 		abort();
 	}
+	
 	return sd;
 }
 
@@ -50,7 +57,7 @@ int isRoot()
 
 SSL_CTX* InitServerCTX(void)
 {   
-	SSL_METHOD *method;
+	const SSL_METHOD *method;
 	SSL_CTX *ctx;
 	OpenSSL_add_all_algorithms();  /* load & register all cryptos, etc. */
 	SSL_load_error_strings();   /* load all error messages */

@@ -1,4 +1,4 @@
-//g++ -Wall -o client  client.c -L/usr/lib -lssl -lcrypto
+//g++ -Wall -o client  client.cpp -L/usr/lib -lssl -lcrypto
 
 #include <stdio.h>
 #include <errno.h>
@@ -32,11 +32,11 @@ int OpenConnection(const char *hostname, int port) {
 		perror(hostname);
 		abort();
 	}
-	eturn sd;
+	return sd;
 }
 
 SSL_CTX* InitCTX(void){   
-	SSL_METHOD *method;
+	const SSL_METHOD *method;
 	SSL_CTX *ctx;
 	OpenSSL_add_all_algorithms();  /* Load cryptos, et.al. */
 	SSL_load_error_strings();   /* Bring in and register error messages */
