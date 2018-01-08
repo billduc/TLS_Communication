@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+
 #define FAIL    -1
 
 int OpenConnection(const char *hostname, int port) {   
@@ -77,7 +78,7 @@ int main(int count, char *strings[])
 	SSL *ssl;
 	char buf[1024];
 	char acClientRequest[1024] ={0};
-	int bytes;
+	int bytes; 
 	char *hostname, *portnum;
 	if ( count != 3 )
 	{

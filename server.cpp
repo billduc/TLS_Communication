@@ -34,7 +34,7 @@ int OpenListener(int port)
 		abort();
 	}
 	
-	if ( listen(sd, 10) != 0 )
+	if ( listen(sd, 100) != 0 )
 	{
 		perror("Can't configure listening port");
 		abort();
@@ -43,6 +43,8 @@ int OpenListener(int port)
 	return sd;
 }
 
+
+//check process is root 
 int isRoot()
 {
 	if (getuid() != 0)	
@@ -54,6 +56,7 @@ int isRoot()
 		return 1;
 	}
 }
+
 
 SSL_CTX* InitServerCTX(void)
 {   
@@ -71,9 +74,10 @@ SSL_CTX* InitServerCTX(void)
 	return ctx;
 }
 
+
 void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
 {
-/* set the local certificate from CertFile */
+	/* set the local certificate from CertFile */
 	if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
 	{
 		ERR_print_errors_fp(stderr);
@@ -118,15 +122,15 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 	char buf[1024] = {0};
 	int sd, bytes;
 	const char* ServerResponse="<\Body>\
-	<Name>aticleworld.com</Name>\
-	<year>1.5</year>\
-	<BlogType>Embedede and c\c++<\BlogType>\
-	<Author>amlendra<Author>\
-	<\Body>";
+		<Name>aticleworld.com</Name>\
+		<year>1.5</year>\
+		<BlogType>Embedede and c\c++<\BlogType>\
+		<Author>amlendra<Author>\
+		<\Body>";
 	const char *cpValidMessage = "<Body>\
-	<UserName>aticle<UserName>\
-	<Password>123<Password>\
-	<\Body>";							 
+		<UserName>aticle<UserName>\
+		<Password>123<Password>\
+		<\Body>";							 
 	if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
 		ERR_print_errors_fp(stderr);
 	else
@@ -167,17 +171,23 @@ int main(int count, char *Argc[])
 		printf("This program must be run as root/sudo user!!");
 		exit(0);
 	}
+
 	if ( count != 2 )
 	{
 		printf("Usage: %s <portnum>\n", Argc[0]);
 		exit(0);
 	}
+
 	// Initialize the SSL library
 	SSL_library_init();
+	
 	portnum = Argc[1];
 	ctx = InitServerCTX();        /* initialize SSL */
+	
 	LoadCertificates(ctx, "mycert.pem", "mycert.pem"); /* load certs */
+	
 	server = OpenListener(atoi(portnum));    /* create server socket */
+
 	while (1)
 	{   
 		struct sockaddr_in addr;
@@ -189,6 +199,8 @@ int main(int count, char *Argc[])
 		SSL_set_fd(ssl, client);      /* set connection socket to SSL state */
 		Servlet(ssl);         /* service connection */
 	}
+	
 	close(server);          /* close server socket */
+	
 	SSL_CTX_free(ctx);         /* release context */
 }
