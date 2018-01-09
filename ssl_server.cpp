@@ -8,9 +8,9 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-#define SSL_SERVER_RSA_CERT	"/home/nmathew/cacert/ssl_server.crt"
-#define SSL_SERVER_RSA_KEY	"/home/nmathew/cacert/ssl_server.key"
-#define SSL_SERVER_RSA_CA_CERT	"/home/nmathew/cacert/ca.crt"
+#define SSL_SERVER_RSA_CERT	"ssl_server.crt"
+#define SSL_SERVER_RSA_KEY	"ssl_server.key"
+#define SSL_SERVER_RSA_CA_CERT	"ca.crt"
 #define SSL_SERVER_RSA_CA_PATH	"/home/nmathew/cacert/"
 
 #define SSL_SERVER_ADDR		"/home/nmathew/ssl_server"
