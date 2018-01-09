@@ -141,13 +141,15 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 		printf("Client msg: \"%s\"\n", buf);
 		if ( bytes > 0 )
 		{
-			if(strcmp(cpValidMessage,buf) == 0)
+			if (strcmp(cpValidMessage,buf) == 0)
 			{
-				SSL_write(ssl, ServerResponse, strlen(ServerResponse)); /* send reply */
+				//SSL_write(ssl, ServerResponse, strlen(ServerResponse)); /* send reply */
+				write(SSL_get_fd(ssl), ServerResponse, strlen(ServerResponse));
 			}
 			else
 			{
-				SSL_write(ssl, "Invalid Message", strlen("Invalid Message")); /* send reply */
+				//SSL_write(ssl, "Invalid Message", strlen("Invalid Message")); /* send reply */
+				write(SSL_get_fd(ssl), "Invalid Message", strlen("Invalid Message"));
 			}
 		}
 		else
@@ -162,9 +164,16 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 
 int main(int count, char *Argc[])
 {   
+
+	//initialize contex for ssl/tls
 	SSL_CTX *ctx;
+
+	//server socket  
 	int server;
+
+	//port to listening
 	char *portnum;
+
 	//Only root user have the permsion to run the server
 	if(!isRoot())
 	{
@@ -182,6 +191,7 @@ int main(int count, char *Argc[])
 	SSL_library_init();
 	
 	portnum = Argc[1];
+	
 	ctx = InitServerCTX();        /* initialize SSL */
 	
 	LoadCertificates(ctx, "mycert.pem", "mycert.pem"); /* load certs */
