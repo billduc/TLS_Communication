@@ -1,3 +1,5 @@
+//g++ -Wall -o ssl_server ssl_server_libssl.cpp -L/usr/lib -lssl -lcrypto
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -21,7 +23,7 @@
 int main(void)
 {
 	int verify_peer = ON;
-	SSL_METHOD *server_meth;
+	const SSL_METHOD *server_meth;
 	SSL_CTX *ssl_server_ctx;
 	int serversocketfd;
 	int clientsocketfd;

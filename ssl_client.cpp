@@ -21,7 +21,7 @@
 int main(void)
 {
 	int verify_peer = ON;
-	SSL_METHOD *client_meth;
+	const SSL_METHOD *client_meth;
 	SSL_CTX *ssl_client_ctx;
 	int clientsocketfd;
 	struct sockaddr_un serveraddr;
