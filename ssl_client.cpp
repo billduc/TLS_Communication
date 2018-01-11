@@ -1,19 +1,22 @@
+//g++ -Wall -o ssl_client  ssl_client.cpp -L/usr/lib -lssl -lcrypto
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <string.h>
-
+#include <resolv.h>
+#include <netdb.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
 #define SSL_CLIENT_RSA_CERT	"ssl_client.crt"
 #define SSL_CLIENT_RSA_KEY	"ssl_client.key"
-#define SSL_CLIENT_RSA_CA_CERT	"/home/nmathew/cacert/ca.crt"
-#define SSL_CLIENT_RSA_CA_PATH	"/home/nmathew/cacert/"
+#define SSL_CLIENT_RSA_CA_CERT	"ca.crt"
+#define SSL_CLIENT_RSA_CA_PATH	""
 
-#define SSL_SERVER_ADDR		"/home/nmathew/ssl_server"
+#define SSL_SERVER_ADDR		""
 
 #define OFF	0
 #define ON	1
@@ -24,7 +27,9 @@ int main(void)
 	const SSL_METHOD *client_meth;
 	SSL_CTX *ssl_client_ctx;
 	int clientsocketfd;
-	struct sockaddr_un serveraddr;
+	//struct sockaddr_un serveraddr;
+	struct sockaddr_in serveraddr;
+	struct hostent *host;
 	int handshakestatus;
 	SSL *clientssl;
 	char buffer[1024] = "Client Hello World";
@@ -32,15 +37,16 @@ int main(void)
 
 	SSL_library_init();
 	SSL_load_error_strings();
-	client_meth = SSLv3_client_method();
+	client_meth = SSLv23_client_method();
+	printf("test new context\n");
 	ssl_client_ctx = SSL_CTX_new(client_meth);
-	
-	if(!ssl_client_ctx)
+	printf("test new context 2\n");
+	if(ssl_client_ctx == NULL)
 	{
 		ERR_print_errors_fp(stderr);
 		return -1;
 	}
-
+	printf("test new context 3\n");
 	if(verify_peer)
 	{	
 	
@@ -79,9 +85,16 @@ int main(void)
 		return -1;
 	}
 	memset(&serveraddr, 0, sizeof(struct sockaddr_un));
-	serveraddr.sun_family = AF_UNIX;
-	serveraddr.sun_path[0] = 0;
-	strncpy(&(serveraddr.sun_path[1]), SSL_SERVER_ADDR, strlen(SSL_SERVER_ADDR) + 1);
+
+	host = gethostbyname("localhost");
+
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_port = htons(4242);
+	serveraddr.sin_addr.s_addr = *(long*)(host->h_addr);
+
+	//serveraddr.sun_family = AF_UNIX;
+	//serveraddr.sun_path[0] = 0;
+	//strncpy(&(serveraddr.sun_path[1]), SSL_SERVER_ADDR, strlen(SSL_SERVER_ADDR) + 1);
 	
 	connect(clientsocketfd, (struct sockaddr *)&serveraddr, sizeof(struct sockaddr_un));
 		
@@ -94,7 +107,7 @@ int main(void)
 	}
 	SSL_set_fd(clientssl, clientsocketfd);
 		
-	if((ret = SSL_connect(clientssl)) != 1)
+	if((ret = SSL_connect(clientssl)) != 0)
 	{
 		printf("Handshake Error %d\n", SSL_get_error(clientssl, ret));
 		return -1;

@@ -1,4 +1,4 @@
-//g++ -Wall -o ssl_server ssl_server_libssl.cpp -L/usr/lib -lssl -lcrypto
+//g++ -Wall -o ssl_server ssl_server.cpp -L/usr/lib -lssl -lcrypto
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -6,7 +6,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <string.h>
-
+#include <resolv.h>
+#include <netdb.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
@@ -27,12 +28,15 @@ int main(void)
 	SSL_CTX *ssl_server_ctx;
 	int serversocketfd;
 	int clientsocketfd;
-	struct sockaddr_un serveraddr;
+	//struct sockaddr_un serveraddr;
+	struct sockaddr_in serveraddr;
+	struct hostnet *host;
+
 	int handshakestatus;
 
 	SSL_library_init();
 	SSL_load_error_strings();
-	server_meth = SSLv3_server_method();
+	server_meth = SSLv23_server_method();
 	ssl_server_ctx = SSL_CTX_new(server_meth);
 	
 	if(!ssl_server_ctx)
@@ -72,16 +76,22 @@ int main(void)
 		SSL_CTX_set_verify_depth(ssl_server_ctx, 1);
 	}
 
-	if((serversocketfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+	if((serversocketfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		printf("Error on socket creation\n");
 		return -1;
 	}
 	memset(&serveraddr, 0, sizeof(struct sockaddr_un));
-	serveraddr.sun_family = AF_UNIX;
-	serveraddr.sun_path[0] = 0;
-	strncpy(&(serveraddr.sun_path[1]), SSL_SERVER_ADDR, strlen(SSL_SERVER_ADDR) + 1);
-	if(bind(serversocketfd, (struct sockaddr *)&serveraddr, sizeof(struct sockaddr_un)))
+	//serveraddr.sun_family = AF_UNIX;
+	//serveraddr.sun_path[0] = 0;
+	//strncpy(&(serveraddr.sun_path[1]), SSL_SERVER_ADDR, strlen(SSL_SERVER_ADDR) + 1);
+	
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_port = htons(4242);
+	serveraddr.sin_addr.s_addr = INADDR_ANY;
+
+
+	if(bind(serversocketfd, (struct sockaddr *)&serveraddr, sizeof(struct sockaddr_in)))
 	{
 		printf("server bind error\n");
 		return -1;
