@@ -51,6 +51,17 @@ SSL_CTX* InitCTX(void){
 	return ctx;
 }
 
+void LoadCertificates(SSL_CTX* ctx, char* CertFile)
+{
+	/* set the local certificate from CertFile */
+	if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
+	{
+		ERR_print_errors_fp(stderr);
+		abort();
+	}
+}
+
+
 void ShowCerts(SSL* ssl){   
 	X509 *cert;
 	char *line;
@@ -89,6 +100,9 @@ int main(int count, char *strings[])
 	hostname=strings[1];
 	portnum=strings[2];
 	ctx = InitCTX();
+
+	LoadCertificates(ctx, "ca.crt");
+	
 	server = OpenConnection(hostname, atoi(portnum));
 	ssl = SSL_new(ctx);      /* create new SSL connection state */
 	SSL_set_fd(ssl, server);    /* attach the socket descriptor */
