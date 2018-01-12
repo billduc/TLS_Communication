@@ -143,13 +143,13 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 		{
 			if (strcmp(cpValidMessage,buf) == 0)
 			{
-				//SSL_write(ssl, ServerResponse, strlen(ServerResponse)); /* send reply */
-				write(SSL_get_fd(ssl), ServerResponse, strlen(ServerResponse));
+				SSL_write(ssl, ServerResponse, strlen(ServerResponse)); /* send reply */
+				//write(SSL_get_fd(ssl), ServerResponse, strlen(ServerResponse));
 			}
 			else
 			{
-				//SSL_write(ssl, "Invalid Message", strlen("Invalid Message")); /* send reply */
-				write(SSL_get_fd(ssl), "Invalid Message", strlen("Invalid Message"));
+				SSL_write(ssl, "Invalid Message", strlen("Invalid Message")); /* send reply */
+				//write(SSL_get_fd(ssl), "Invalid Message", strlen("Invalid Message"));
 			}
 		}
 		else
