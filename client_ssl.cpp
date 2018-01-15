@@ -135,7 +135,7 @@ int main(int count, char *strings[])
     if ( SSL_connect(ssl) == FAIL )			/* perform the connection */
         ERR_print_errors_fp(stderr);
     else
-    {   char *msg = "Hello???";
+    {   char *msg = "Hello??? send to server aaaaa";
 
         printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
         ShowCerts(ssl);								/* get any certs */
