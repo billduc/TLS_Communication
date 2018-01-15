@@ -65,6 +65,13 @@ int OpenConnection(const char *hostname, int port)
     return sd;
 }
 
+int
+verify(int ok, X509_STORE_CTX *store)
+{
+    // Always abort verification with an error.
+    return 0;
+}
+
 /*---------------------------------------------------------------------*/
 /*--- InitCTX - initialize the SSL engine.                          ---*/
 /*---------------------------------------------------------------------*/
@@ -82,6 +89,13 @@ SSL_CTX* InitCTX(void)
         ERR_print_errors_fp(stderr);
         abort();
     }
+
+    // Load trusted CAs from default paths.
+    SSL_CTX_set_default_verify_paths(ctx);
+
+    // Set verify function
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, verify);
+
     return ctx;
 }
 
@@ -145,6 +159,7 @@ int main(int count, char *strings[])
         printf("Received: \"%s\"\n", buf);
         SSL_free(ssl);								/* release connection state */
     }
+    SSL_free(ssl);
     close(server);									/* close socket */
     SSL_CTX_free(ctx);								/* release context */
 }
