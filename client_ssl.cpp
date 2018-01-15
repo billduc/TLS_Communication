@@ -51,7 +51,7 @@ int OpenConnection(const char *hostname, int port)
         perror(hostname);
         abort();
     }
-    sd = socket(PF_INET, SOCK_STREAM, 0);
+    sd = socket(AF_INET, SOCK_STREAM, 0);
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -69,6 +69,7 @@ int
 verify(int ok, X509_STORE_CTX *store)
 {
     // Always abort verification with an error.
+    printf("-------error verify cer\n");
     return 0;
 }
 
@@ -90,11 +91,13 @@ SSL_CTX* InitCTX(void)
         abort();
     }
 
+    SSL_CTX_use_certificate_file(ctx, "certificate.pem", SSL_FILETYPE_PEM);
+
     // Load trusted CAs from default paths.
-    SSL_CTX_set_default_verify_paths(ctx);
+    //SSL_CTX_set_default_verify_paths(ctx);
 
     // Set verify function
-    SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, verify);
+    //SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, verify);
 
     return ctx;
 }
@@ -142,7 +145,7 @@ int main(int count, char *strings[])
 	portnum=strings[2];
 
     ctx = InitCTX();
-    SSL_CTX_use_certificate_file(ctx, "certificate.pem", SSL_FILETYPE_PEM);
+   
     server = OpenConnection(hostname, atoi(portnum));
     ssl = SSL_new(ctx);						/* create new SSL connection state */
     SSL_set_fd(ssl, server);				/* attach the socket descriptor */
@@ -159,7 +162,7 @@ int main(int count, char *strings[])
         printf("Received: \"%s\"\n", buf);
         SSL_free(ssl);								/* release connection state */
     }
-    SSL_free(ssl);
+    //SSL_free(ssl);
     close(server);									/* close socket */
     SSL_CTX_free(ctx);								/* release context */
 }
