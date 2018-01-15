@@ -128,7 +128,7 @@ int main(int count, char *strings[])
 	portnum=strings[2];
 
     ctx = InitCTX();
-    SSL_CTX_use_certificate_file(ctx, "certificate.p12", SSL_FILETYPE_PEM);
+    SSL_CTX_use_certificate_file(ctx, "certificate.pem", SSL_FILETYPE_PEM);
     server = OpenConnection(hostname, atoi(portnum));
     ssl = SSL_new(ctx);						/* create new SSL connection state */
     SSL_set_fd(ssl, server);				/* attach the socket descriptor */
