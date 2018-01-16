@@ -91,7 +91,7 @@ SSL_CTX* InitCTX(void)
         abort();
     }
 
-    SSL_CTX_use_certificate_file(ctx, "fclient/client.crt", SSL_FILETYPE_PEM);
+    SSL_CTX_use_certificate_file(ctx, "certificate.pem", SSL_FILETYPE_PEM);
 
     // Load trusted CAs from default paths.
     //SSL_CTX_set_default_verify_paths(ctx);

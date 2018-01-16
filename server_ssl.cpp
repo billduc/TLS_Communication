@@ -101,6 +101,12 @@ void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
         abort();
     }
     /* verify private key */
+
+    if (!SSL_CTX_load_verify_locations(ctx, CertFile ,NULL)) {
+                     ERR_print_errors_fp(stderr);
+                    exit(1);
+            }
+
     if ( !SSL_CTX_check_private_key(ctx) )
     {
         fprintf(stderr, "Private key does not match the public certificate\n");
@@ -178,7 +184,7 @@ int main(int count, char *strings[])
     }
     portnum = strings[1];
     ctx = InitServerCTX();								/* initialize SSL */
-    LoadCertificates(ctx, "fserver/server.crt", "fserver/private/server.key");	/* load certs */
+    LoadCertificates(ctx,"certificate.pem", "key.pem");	/* load certs */
     server = OpenListener(atoi(portnum));				/* create server socket */
     while (1)
     {   struct sockaddr_in addr;
