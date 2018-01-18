@@ -101,7 +101,7 @@ int main(int count, char *strings[])
 	portnum=strings[2];
 	ctx = InitCTX();
 
-	LoadCertificates(ctx, "ca.crt");
+	LoadCertificates(ctx, "CA/domain.cert.pem");
 	
 	server = OpenConnection(hostname, atoi(portnum));
 	ssl = SSL_new(ctx);      /* create new SSL connection state */

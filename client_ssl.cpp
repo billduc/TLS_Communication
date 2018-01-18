@@ -84,7 +84,8 @@ SSL_CTX* InitCTX(void)
     SSL_CTX *ctx;
     SSL_library_init();
     OpenSSL_add_all_algorithms();		/* Load cryptos, et.al. */
-    SSL_load_error_strings();			/* Bring in and register error messages */
+    SSL_load_error_strings();	
+    ERR_load_crypto_strings();		/* Bring in and register error messages */
     method = TLSv1_2_client_method();		/* Create new client-method instance */
     ctx = SSL_CTX_new(method);			/* Create new context */
 
@@ -96,7 +97,7 @@ SSL_CTX* InitCTX(void)
         abort();
     }
 
-    SSL_CTX_use_certificate_file(ctx, "certificate.pem", SSL_FILETYPE_PEM);
+    SSL_CTX_use_certificate_file(ctx, "CA/domain.cert.pem", SSL_FILETYPE_PEM);
     //SSL_CTX_load_verify_locations(ctx, "certificate.pem", NULL);
 
     // Load trusted CAs from default paths.
@@ -154,12 +155,16 @@ int main(int count, char *strings[])
 
     ctx = InitCTX();
    
-    web = BIO_new_ssl_connect(ctx);
+    //web = BIO_new_ssl_connect(ctx);
     //std::string  hostn = std::string(hostname)+":"+ std::string(portnum);
     std::string  hostn = "localhost:4242";
 
     printf("%s\n",hostn.c_str());
-    res = BIO_set_conn_hostname(web, hostn.c_str());
+    //res = BIO_set_conn_hostname(web, hostn.c_str());
+    res = BIO_set_conn_hostname(web, "localhost");
+    res = BIO_set_conn_int_port(web, "4242");
+
+    //web = BIO_new_connect("localhost:4242");
 
     if(!(1 == res)) 
         printf("error conn bio\n");
@@ -174,9 +179,9 @@ int main(int count, char *strings[])
         printf("error cretae preferred cipher");
 
 
-    res = SSL_set_tlsext_host_name(ssl, hostname);
+    //res = SSL_set_tlsext_host_name(ssl, hostname);
     if(!(1 == res)) 
-        printf("error1\n");
+        printf("error1 %d\n",res);
 
     out = BIO_new_fp(stdout, BIO_NOCLOSE);
     if(!(NULL != out)) 
@@ -184,11 +189,11 @@ int main(int count, char *strings[])
 
     res = BIO_do_connect(web);
     if(!(1 == res)) 
-        printf("error3\n");
+        printf("error3 %d\n",res);
 
     res = BIO_do_handshake(web);
     if(!(1 == res)) 
-        printf("error4\n");
+        printf("error4 %d\n",res);
 
 
     X509* cert = SSL_get_peer_certificate(ssl);

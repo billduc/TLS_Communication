@@ -194,7 +194,7 @@ int main(int count, char *Argc[])
 	
 	ctx = InitServerCTX();        /* initialize SSL */
 	
-	LoadCertificates(ctx, "ca.crt", "ca.key"); /* load certs */
+	LoadCertificates(ctx,"CA/domain.cert.pem", "CA/domain.key.pem"); /* load certs */
 	
 	server = OpenListener(atoi(portnum));    /* create server socket */
 
