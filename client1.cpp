@@ -96,11 +96,11 @@ hostname=strings[1];
 portnum=strings[2];
 
 ctx = InitCTX();
-if ( SSL_CTX_use_certificate_file(ctx, "CCAA/ca.crt.pem",SSL_FILETYPE_PEM) <= 0 )
-    {
-        ERR_print_errors_fp(stderr);
-        abort();
-    }
+// if ( SSL_CTX_use_certificate_file(ctx, "CCAA/ca.crt.pem",SSL_FILETYPE_PEM) <= 0 )
+//     {
+//         ERR_print_errors_fp(stderr);
+//         abort();
+//     }
 
 printf("test init\n");
 server = OpenConnection(hostname, atoi(portnum));
