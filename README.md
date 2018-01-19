@@ -1,34 +1,25 @@
 # TLS_Communication
 
-```
- g++ -Wall -o client client.cpp -L/usr/lib -lssl -lcrypto
- ./client <host_name> <port_number>
-```
+This code using c++ (:shipit:) to implement TLS communication.
+
+
+### build and excute server side
+
 
 ```
  g++ -Wall -o server server.cpp -L/usr/lib -lssl -lcrypto
  sudo ./server <portnum>
 ```
 
-create a Certificate.
-```
- openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
-```
-
-Install the OpenSSL library, for the ubuntu use the below command.
-```
-sudo apt-get install libssl–dev
-```
-
-If errer Unable to locate package libssl-dev
+### build and excute client side
 
 ```
- dpkg --add-architecture i386
- apt-get update
- apt-get install libssl-dev:i386
+ g++ -Wall -o client client.cpp -L/usr/lib -lssl -lcrypto
+ ./client <host_name> <port_number>
 ```
 
-If error /usr/include/openssl/e_os2.h:56:33: fatal error: openssl/opensslconf.h: No such file or directory
-```
- sudo apt-get install libssl-dev
-```
+Note
+> to use wireshark to verify handshark TLS1.2 protocal. you need to used port number less than 1024 with root permission. 
+
+### use wireshark to show communication.
+![tls1.2_handshark](https://github.com/billduc/screenshot/blob/master/tls1.2_handshark.png)
