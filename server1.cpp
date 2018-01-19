@@ -169,7 +169,7 @@ SSL_library_init();
 
 portnum = strings[1];
 ctx = InitServerCTX();        /* initialize SSL */
-LoadCertificates(ctx, "CCAA/server.crt", "CCAA/server.key.pem");  /* load certs */
+LoadCertificates(ctx, "CA/server.crt", "CA/server.key.pem");  /* load certs */
 server = OpenListener(atoi(portnum));    /* create server socket */
 while (1)
 {   struct sockaddr_in addr;
