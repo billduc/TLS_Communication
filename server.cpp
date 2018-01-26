@@ -122,7 +122,7 @@ void ShowCerts(SSL* ssl)
     }
     else
         printf("No certificates.\n");
-    }
+}
 
 void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 {   
